@@ -1,0 +1,5 @@
+services:
+  ttslogic.route_subscriber:
+    class: Drupal\ttslogic\EventSubscriber\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

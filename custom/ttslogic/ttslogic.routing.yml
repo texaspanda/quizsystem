@@ -1,0 +1,27 @@
+ttslogic.form:
+  path: '/user-generate'
+  defaults:
+    _form: '\Drupal\ttslogic\Form\UserForm'
+    _title: 'Generate User Form'
+  requirements:
+    _permission: 'generate user'
+ttslogic.timer_save:
+  path: '/timer-save/{group_id}'
+  defaults:
+    _controller: '\Drupal\ttslogic\Controller\Timer::content'
+    _title: 'Hello Drupal!'
+  requirements:
+    _permission: 'access content'
+ttslogic.user:
+  path: 'statistics/user/{user}'
+  defaults:
+    _title: 'User profile'
+    _controller: '\Drupal\ttslogic\Controller\UserController::index'
+  requirements:
+    _entity_access: 'user.view statistics'
+  options:
+    parameters:
+      user:
+        type: entity:user
+      account:
+        type: entity:user

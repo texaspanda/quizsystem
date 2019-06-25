@@ -1,0 +1,4 @@
+'generate user':
+  title: 'Generating user account'
+  description: 'Generating user account with candidate role'
+  restrict access: true

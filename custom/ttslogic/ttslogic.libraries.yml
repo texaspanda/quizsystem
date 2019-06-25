@@ -1,0 +1,12 @@
+timerjquery:
+  js:
+    js/timerjquery.js: {}
+    js/timer.js: {}
+    js/hide.js: {}
+  css:
+    module:
+      css/main.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.cookie
+    - core/drupalSettingsm

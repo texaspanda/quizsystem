@@ -1,0 +1,5 @@
+name: 'tts_cron'
+type: module
+description: 'TTS custom cron tasks'
+core: 8.x
+package: 'Custom'

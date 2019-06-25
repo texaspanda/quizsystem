@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - tts_cron
+title: 'Cron job for block candidates accounts after 30 minutes'
+id: cadidate_block_cron_job
+module: tts_cron
+callback: tts_cron_candidate_block_cron_job

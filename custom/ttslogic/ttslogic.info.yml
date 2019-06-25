@@ -1,0 +1,5 @@
+name: 'ttslogic'
+type: module
+description: 'TTS custom module. Custom functionality and logic.'
+core: 8.x
+package: 'Custom'

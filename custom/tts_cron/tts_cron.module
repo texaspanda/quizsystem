@@ -1,0 +1,58 @@
+<?php
+
+use Drupal\opigno_module\Entity\UserModuleStatus;
+use Drupal\opigno_module\Entity\OpignoModule;
+
+/**
+ * Ban candidate account after 30 minutes from starting the test.
+ *
+ * Callback for ttslogic_form_opigno_module_result_form_alter().
+ */
+function tts_cron_candidate_block_cron_job() {
+  $job_start = \Drupal::time()->getCurrentTime();
+  $query = \Drupal::database()->select('user_module_start_time', 'umt');
+  $query->addField('umt','user_id');
+  $query->addField('umt', 'start_time');
+  $query->addField('umt', 'finish_time');
+  $query->condition('umt.finish_time', $job_start, '<');
+  $query->condition('umt.block_status', 0);
+  $query_result = $query->execute()->fetchObject();
+  if(!empty($query_result)) {
+    $uid = $query_result->user_id;
+    $user = \Drupal\user\Entity\User::load($uid);
+    $user_module_status_array = \Drupal::entityTypeManager()
+      ->getStorage('user_module_status')
+      ->loadByProperties(['user_id' => $uid]);
+    $attempt = end($user_module_status_array);
+    $attempt->setEvaluated(0);
+    $finish_attempt = $attempt->finishAttempt();
+    $db_evaluate_status = \Drupal::database()->update('user_module_status')
+      ->fields([
+        'evaluated' => 0,
+      ])
+      ->condition('user_id', $uid, '=')
+      ->execute();
+    $mail_manager = \Drupal::service('plugin.manager.mail');
+    $module = "ttslogic";
+    $key = "ttslogic_email_test_submit";
+    $send = TRUE;
+    $admin = \Drupal\user\Entity\User::load('1');
+    $admin_email = $admin->getEmail();
+    $params['admin_email'] = $admin_email;
+    $params['user'] = $user->getAccountName();
+    $params['user_email'] = $user->getEmail();
+    $email_candidate = $mail_manager->mail($module, $key, $langcode, $to, $params, NULL, $send);
+    $key = "ttslogic_email_to_hr_after_test";
+    $email_hr = $mail_manager->mail($module, $key, $langcode, $to, $params, NULL, $send);
+    $update_block_status = \Drupal::database()->update('user_module_start_time')
+      ->fields([
+        'block_status' => 1,
+      ])
+      ->condition('user_id', $uid, '=')
+      ->execute();
+    $user->block();
+    $user->save();
+    drupal_set_message('tts_cron_candidate_block_cron_job: success');
+
+  }
+}
